@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+    <title>Price Predictor - Map View</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#006c47",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-dim": "#ccdaff",
+                        "primary-fixed": "#dae2ff",
+                        "surface-container-low": "#f1f3ff",
+                        "secondary-fixed-dim": "#71dba6",
+                        "secondary-fixed": "#8df7c1",
+                        "surface-container-high": "#e1e8ff",
+                        "surface-container-highest": "#d8e2ff",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "surface-container": "#e9edff",
+                        "surface": "#faf9ff",
+                        "primary": "#003d9b",
+                        "on-surface": "#051a3e",
+                        "outline-variant": "#c3c6d6",
+                        "secondary-container": "#8af5be",
+                        "on-secondary-container": "#00714b",
+                        "on-surface-variant": "#434654",
+                        "outline": "#737685",
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-md": ["JetBrains Mono"],
+                        "headline-md": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        body {
+            background-color: #faf9ff;
+            -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Prevent scrolling on map page */
+        }
+        
+        #map {
+            position: absolute;
+            top: 64px; /* below header */
+            bottom: 72px; /* above navbar */
+            left: 0;
+            right: 0;
+            z-index: 10;
+        }
+
+        /* Custom Map Marker Popup Styles */
+        .leaflet-popup-content-wrapper {
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        .leaflet-popup-content {
+            margin: 16px;
+            font-family: 'Inter', sans-serif;
+        }
+        .marker-pin {
+            width: 30px;
+            height: 30px;
+            border-radius: 50% 50% 50% 0;
+            background: #003d9b;
+            position: absolute;
+            transform: rotate(-45deg);
+            left: 50%;
+            top: 50%;
+            margin: -15px 0 0 -15px;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .marker-icon {
+            transform: rotate(45deg);
+            color: white;
+            font-size: 16px;
+        }
+
+        /* Loading spinner */
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #003d9b;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-surface antialiased">
+
+    <!-- TopAppBar -->
+    <header class="w-full z-50 bg-surface/90 backdrop-blur-md dark:bg-surface-dim/90 shadow-sm relative">
+        <div class="flex items-center justify-between px-4 h-16 w-full max-w-7xl mx-auto">
+            <div class="flex items-center gap-4">
+                <a href="{{ url_for('index') }}" class="active:opacity-70 transition-opacity p-2 -ml-2 text-primary">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                </a>
+                <h1 class="font-headline-md text-[20px] text-primary dark:text-primary-fixed">Explore Area</h1>
+            </div>
+            <a href="{{ url_for('profile') }}" class="active:scale-95 transition-transform overflow-hidden rounded-full w-9 h-9 border-2 border-primary shadow-sm bg-surface-variant flex items-center justify-center shrink-0">
+                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80" alt="Profile" class="w-full h-full object-cover">
+            </a>
+        </div>
+    </header>
+
+    <!-- Floating Search & Action Bar over Map -->
+    <div class="absolute top-20 left-0 w-full z-[1000] px-4 pointer-events-none flex flex-col gap-2">
+        <div class="max-w-md mx-auto w-full pointer-events-auto flex gap-2">
+            <div class="relative flex-1 group shadow-lg rounded-xl overflow-hidden bg-surface">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+                <input type="text" id="searchInput" class="w-full h-12 pl-10 pr-10 bg-transparent border-none text-body-md focus:ring-2 focus:ring-primary outline-none" placeholder="Search neighborhood...">
+                <button id="clearSearch" class="absolute right-2 top-1/2 -translate-y-1/2 text-outline hidden hover:text-on-surface p-1 rounded-full">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </div>
+            
+            <button id="locateMeBtn" class="h-12 w-12 bg-surface text-primary rounded-xl shadow-lg flex items-center justify-center active:scale-95 transition-transform">
+                <span class="material-symbols-outlined">my_location</span>
+            </button>
+        </div>
+        
+        <!-- Loading indicator -->
+        <div id="loadingIndicator" class="max-w-md mx-auto w-full pointer-events-auto hidden justify-center mt-2">
+            <div class="bg-surface px-4 py-2 rounded-full shadow-md flex items-center gap-2 text-sm text-primary font-medium">
+                <div class="loader" style="display: block;"></div>
+                Finding properties...
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Agent Chat Modal -->
+    <div id="aiChatModal" class="fixed inset-0 z-[2000] hidden flex flex-col justify-end pointer-events-none">
+        <div class="bg-surface-container-highest/60 backdrop-blur-sm absolute inset-0 transition-opacity opacity-0 pointer-events-auto" id="aiChatBackdrop" onclick="closeAiChat()"></div>
+        <div class="bg-surface w-full max-w-2xl mx-auto rounded-t-3xl shadow-2xl pointer-events-auto transition-transform translate-y-full duration-300 ease-out flex flex-col h-[75vh] border-t border-outline-variant z-10" id="aiChatContainer">
+            <!-- Header -->
+            <div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center bg-primary text-white rounded-t-3xl shadow-md">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                        <span class="material-symbols-outlined text-white">smart_toy</span>
+                    </div>
+                    <div>
+                        <h2 class="font-headline-md text-[18px] leading-tight">AI Agent</h2>
+                        <p class="text-[12px] text-primary-fixed-dim font-medium" id="aiChatPropName">Property Name</p>
+                    </div>
+                </div>
+                <button onclick="closeAiChat()" class="text-primary-fixed-dim hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            
+            <!-- Chat Messages -->
+            <div id="aiChatMessages" class="flex-1 overflow-y-auto p-4 flex flex-col gap-4 bg-surface-container-lowest">
+                <!-- Messages will be injected here -->
+            </div>
+            
+            <!-- Input Area -->
+            <div class="p-4 bg-surface border-t border-outline-variant shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
+                <form id="aiChatForm" class="flex gap-2 max-w-xl mx-auto" onsubmit="handleAiChatSubmit(event)">
+                    <input type="text" id="aiChatInput" autocomplete="off" class="flex-1 bg-surface-container rounded-full px-5 py-3.5 text-body-md focus:outline-none focus:ring-2 focus:ring-primary border-none shadow-inner" placeholder="Ask for rent, broker number...">
+                    <button type="submit" class="bg-primary hover:bg-primary/90 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-md active:scale-95 transition-transform shrink-0">
+                        <span class="material-symbols-outlined">send</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map Container -->
+    <div id="map"></div>
+
+    <!-- BottomNavBar Spacer (since map is flex-1, we need to leave room for the fixed navbar) -->
+    <div class="h-[72px] w-full bg-surface"></div>
+
+    <!-- BottomNavBar -->
+    <nav class="fixed bottom-0 left-0 w-full z-[1001] flex justify-around items-center px-4 py-2 pb-safe bg-surface/90 backdrop-blur-md dark:bg-surface-container-lowest/90 border-t border-outline-variant shadow-[0px_-4px_20px_rgba(0,0,0,0.1)]">
+        <a class="flex flex-col items-center justify-center text-on-surface-variant p-2 transition-all active:scale-95" href="{{ url_for('index') }}">
+            <span class="material-symbols-outlined">home</span>
+            <span class="font-label-md text-[12px] mt-1">Home</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-on-surface-variant p-2 transition-all active:scale-95" href="{{ url_for('index') }}">
+            <span class="material-symbols-outlined">analytics</span>
+            <span class="font-label-md text-[12px] mt-1">Predict</span>
+        </a>
+        <a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-xl px-4 py-1 transition-all active:scale-95" href="{{ url_for('map_page') }}">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">explore</span>
+            <span class="font-label-md text-[12px] mt-1">Map</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-on-surface-variant p-2 transition-all active:scale-95" href="{{ url_for('profile') }}">
+            <span class="material-symbols-outlined">person</span>
+            <span class="font-label-md text-[12px] mt-1">Profile</span>
+        </a>
+    </nav>
+
+    <!-- Stock Chart Modal -->
+    <div id="stockChartModal" class="hidden fixed inset-0 z-[1000] flex items-center justify-center pointer-events-auto">
+        <div id="stockChartBackdrop" onclick="closeStockChart()" class="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 transition-opacity duration-300"></div>
+        <div id="stockChartContainer" class="relative w-[90%] max-w-lg bg-surface rounded-2xl shadow-xl overflow-hidden translate-y-full transition-transform duration-500 cubic-bezier(0.2, 0.8, 0.2, 1)">
+            <div class="p-4 border-b border-outline-variant flex justify-between items-center bg-surface">
+                <div>
+                    <h3 id="stockChartPropName" class="font-headline-sm font-bold text-on-surface">Property Name</h3>
+                    <p class="text-sm text-on-surface-variant flex items-center gap-1 mt-0.5"><span class="material-symbols-outlined text-[14px]">trending_up</span> <span id="stockChartTrendText">Market Trend</span></p>
+                </div>
+                <button onclick="closeStockChart()" class="text-on-surface-variant hover:text-on-surface bg-surface-container hover:bg-surface-container-high rounded-full p-1.5 transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="p-4 bg-surface h-[300px]">
+                <canvas id="stockChartCanvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    <script>
+        // Initialize Map
+        const initialLat = 12.9698; // Bangalore Center
+        const initialLng = 77.7499; // Whitefield roughly
+        const map = L.map('map', {zoomControl: false}).setView([initialLat, initialLng], 14);
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 19
+        }).addTo(map);
+
+        // Move zoom control to bottom right, above navbar
+        L.control.zoom({
+            position: 'bottomright'
+        }).addTo(map);
+
+        // Styling elements
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearch');
+        
+        let markersLayer = L.layerGroup().addTo(map);
+
+        const typeColors = {
+            "Hotel": "#0c56d0",    // Primary Blue
+            "Hostel": "#006c47",   // Secondary Green
+            "PG": "#7d5200",       // Tertiary Brown
+            "Villa": "#93000a",    // Error Red
+            "Villa for Rent": "#93000a",
+            "Room for Rent": "#0052cc", // Primary Container
+            "House for Sale": "#ba1a1a", // High contrast Red
+            "Apartment for Sale": "#ba1a1a"
+        };
+
+        const typeIcons = {
+            "Hotel": "hotel",
+            "Hostel": "meeting_room",
+            "PG": "single_bed",
+            "Villa": "villa",
+            "Villa for Rent": "villa",
+            "Room for Rent": "key",
+            "House for Sale": "real_estate_agent",
+            "Apartment for Sale": "apartment"
+        };
+
+        // Create Custom DivIcon
+        function createCustomIcon(type) {
+            const color = typeColors[type] || "#003d9b";
+            const iconName = typeIcons[type] || "location_on";
+            
+            return L.divIcon({
+                className: 'custom-div-icon',
+                html: `<div class='marker-pin' style='background:${color};'></div><span class='material-symbols-outlined marker-icon absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-[16px]'>${iconName}</span>`,
+                iconSize: [30, 42],
+                iconAnchor: [15, 42],
+                popupAnchor: [0, -35]
+            });
+        }
+
+        // Fetch and display listings
+        async function fetchListings() {
+            const bounds = map.getBounds();
+            const n = bounds.getNorth();
+            const s = bounds.getSouth();
+            const e = bounds.getEast();
+            const w = bounds.getWest();
+            
+            loadingIndicator.classList.remove('hidden');
+            loadingIndicator.classList.add('flex');
+            markersLayer.clearLayers();
+            
+            try {
+                const response = await fetch(`/api/listings?n=${n}&s=${s}&e=${e}&w=${w}`);
+                const listings = await response.json();
+                
+                listings.forEach(prop => {
+                    const icon = createCustomIcon(prop.type);
+                    
+                    const savedProps = JSON.parse(localStorage.getItem('savedProperties') || '[]');
+                    const isSaved = savedProps.some(p => String(p.id) === String(prop.id));
+                    const favStyle = isSaved ? "font-variation-settings: 'FILL' 1; color: rgb(220 38 38);" : "color: rgb(112 115 125);";
+                    
+                    const trendIsUp = prop.marketTrend.startsWith('+');
+                    const trendColor = trendIsUp ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50';
+                    const trendIcon = trendIsUp ? 'trending_up' : 'trending_down';
+
+                    const popupContent = `
+                        <div class="flex flex-col gap-1 min-w-[160px] relative">
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded-md w-max" style="background-color: ${typeColors[prop.type]}20; color: ${typeColors[prop.type]}">${prop.type}</span>
+                            <button onclick="toggleSaveProperty(this, '${prop.id}', '${prop.name.replace(/'/g, "\\'")}', '${prop.price}', '${prop.details}', '${prop.type}', '${typeIcons[prop.type] || 'home'}')" class="absolute top-0 right-0 p-1.5 bg-surface hover:bg-surface-variant rounded-full shadow-sm transition-colors z-10 border border-outline-variant/30 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[16px] transition-all" style="${favStyle}">favorite</span>
+                            </button>
+                            <h3 class="font-bold text-base text-on-surface leading-tight mt-1 pr-8">${prop.name}</h3>
+                            <p class="text-sm font-medium text-on-surface-variant flex items-center gap-1 mt-0.5"><span class="material-symbols-outlined text-[14px]">info</span> ${prop.details}</p>
+                            <div class="flex items-center gap-2 mt-1">
+                                <p class="font-bold text-primary text-lg leading-none">${prop.price}</p>
+                                <button onclick="openStockChart('${prop.name.replace(/'/g, "\\'")}', '${prop.marketTrend}')" class="flex items-center px-1.5 py-0.5 rounded text-[11px] font-bold ${trendColor} leading-none hover:opacity-80 active:scale-95 transition-all cursor-pointer">
+                                    <span class="material-symbols-outlined text-[14px] mr-0.5" style="font-size: 14px;">${trendIcon}</span>
+                                    ${prop.marketTrend}
+                                </button>
+                            </div>
+                            <button onclick="openAiChat('${prop.name.replace(/'/g, "\\'")}', '${prop.price}', '${prop.details}', '${prop.brokerName}', '${prop.brokerContact}')" class="mt-2 w-full bg-primary hover:bg-primary/90 transition-colors text-white py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-2 shadow-sm">
+                                <span class="material-symbols-outlined text-[18px]">smart_toy</span> Ask AI Agent
+                            </button>
+                        </div>
+                    `;
+
+                    L.marker([prop.lat, prop.lng], {icon: icon})
+                        .bindPopup(popupContent)
+                        .addTo(markersLayer);
+                });
+            } catch (error) {
+                console.error("Error fetching listings:", error);
+            } finally {
+                loadingIndicator.classList.add('hidden');
+                loadingIndicator.classList.remove('flex');
+            }
+        }
+
+        // Search Functionality (Nominatim Geocoding)
+        async function searchLocation(query) {
+            if(!query.trim()) return;
+            
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+                const data = await res.json();
+                
+                if(data && data.length > 0) {
+                    const lat = data[0].lat;
+                    const lon = data[0].lon;
+                    map.setView([lat, lon], 14);
+                    // fetchListings will be called by moveend event
+                } else {
+                    alert("Location not found. Try a different search.");
+                }
+            } catch(e) {
+                console.error("Geocoding failed", e);
+            }
+        }
+
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchLocation(this.value);
+            }
+        });
+        
+        searchInput.addEventListener('input', function() {
+            if(this.value.length > 0) {
+                clearSearchBtn.classList.remove('hidden');
+            } else {
+                clearSearchBtn.classList.add('hidden');
+            }
+        });
+
+        clearSearchBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            this.classList.add('hidden');
+            searchInput.focus();
+        });
+
+        // Locate Me Feature
+        document.getElementById('locateMeBtn').addEventListener('click', () => {
+            if (navigator.geolocation) {
+                // Show loading
+                document.getElementById('locateMeBtn').innerHTML = '<div class="loader" style="display:block; width:16px; height:16px; border-top-color:#003d9b;"></div>';
+                
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        
+                        map.setView([lat, lng], 15);
+                        // fetchListings will be called by moveend event
+                        
+                        // Reset button
+                        document.getElementById('locateMeBtn').innerHTML = '<span class="material-symbols-outlined">my_location</span>';
+                    },
+                    (error) => {
+                        console.error("Geolocation error:", error);
+                        alert("Could not get your location. Please check permissions.");
+                        document.getElementById('locateMeBtn').innerHTML = '<span class="material-symbols-outlined">my_location</span>';
+                    },
+                    { enableHighAccuracy: true, timeout: 5000 }
+                );
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        });
+
+        // Initial Load
+        map.whenReady(() => {
+            fetchListings();
+        });
+
+        // Fetch new listings when panning/zooming to create procedural persistence
+        map.on('moveend', fetchListings);
+
+        // --- Save Property Logic ---
+        window.toggleSaveProperty = function(btn, id, name, price, details, type, icon) {
+            let savedProps = JSON.parse(localStorage.getItem('savedProperties') || '[]');
+            const index = savedProps.findIndex(p => String(p.id) === String(id));
+            const iconSpan = btn.querySelector('span');
+            
+            if(index >= 0) {
+                // Remove
+                savedProps.splice(index, 1);
+                iconSpan.style.fontVariationSettings = "normal";
+                iconSpan.style.color = "rgb(112 115 125)"; // default outline color
+            } else {
+                // Add
+                savedProps.push({ id, name, price, details, type, icon });
+                iconSpan.style.fontVariationSettings = "'FILL' 1";
+                iconSpan.style.color = "rgb(220 38 38)"; // red
+                
+                // Add a little pop animation
+                iconSpan.classList.add('scale-125');
+                setTimeout(() => iconSpan.classList.remove('scale-125'), 150);
+            }
+            
+            localStorage.setItem('savedProperties', JSON.stringify(savedProps));
+        };
+
+        // --- AI Chat Logic ---
+        const aiModal = document.getElementById('aiChatModal');
+        const aiBackdrop = document.getElementById('aiChatBackdrop');
+        const aiContainer = document.getElementById('aiChatContainer');
+        const aiMessages = document.getElementById('aiChatMessages');
+        const aiInput = document.getElementById('aiChatInput');
+        const aiPropName = document.getElementById('aiChatPropName');
+        
+        let currentProp = null;
+
+        window.openAiChat = function(name, price, details, brokerName, brokerContact) {
+            currentProp = { name, price, details, brokerName, brokerContact };
+            aiPropName.textContent = name;
+            aiMessages.innerHTML = ''; // Clear old messages
+            
+            // Show modal
+            aiModal.classList.remove('hidden');
+            // Trigger animations
+            setTimeout(() => {
+                aiBackdrop.classList.remove('opacity-0');
+                aiContainer.classList.remove('translate-y-full');
+            }, 10);
+
+            // Add initial AI greeting
+            appendAiMessage(`Hello! ✨ I am the AI Assistant for **${name}**.\n\nThis property is listed at **${price}** and features: *${details}*.\n\nI can provide you with the **broker's contact number** or help you schedule a visit. How can I help you?`);
+        };
+
+        window.closeAiChat = function() {
+            aiBackdrop.classList.add('opacity-0');
+            aiContainer.classList.add('translate-y-full');
+            setTimeout(() => {
+                aiModal.classList.add('hidden');
+            }, 300);
+        };
+
+        window.handleAiChatSubmit = function(e) {
+            e.preventDefault();
+            const text = aiInput.value.trim();
+            if(!text) return;
+            
+            // User message
+            appendUserMessage(text);
+            aiInput.value = '';
+            
+            // AI Response simulation (add slight delay for realism)
+            setTimeout(() => {
+                const lowerText = text.toLowerCase();
+                if(lowerText.includes('broker') || lowerText.includes('contact') || lowerText.includes('number') || lowerText.includes('call') || lowerText.includes('phone')) {
+                    appendAiMessage(`You can contact the broker, **${currentProp.brokerName}**, directly at **${currentProp.brokerContact}**. \n\nWould you like me to open WhatsApp to message them?`);
+                } else if(lowerText.includes('rent') || lowerText.includes('price') || lowerText.includes('cost') || lowerText.includes('much')) {
+                    appendAiMessage(`The price for this property is **${currentProp.price}**. Let me know if you want the broker's number to negotiate!`);
+                } else if(lowerText.includes('visit') || lowerText.includes('see') || lowerText.includes('tour') || lowerText.includes('schedule')) {
+                    appendAiMessage(`I can help schedule a visit! The property is open for viewing from 10 AM to 6 PM every day. \n\nShall I share the broker's contact number so you can coordinate?`);
+                } else {
+                    appendAiMessage(`I'm a virtual assistant for this property. I can help you with the **rent/price**, the **broker's contact number**, or scheduling a **visit**!`);
+                }
+            }, 600);
+        };
+
+        function appendUserMessage(text) {
+            const msg = document.createElement('div');
+            msg.className = 'self-end bg-primary text-white rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[80%] shadow-sm text-body-md whitespace-pre-wrap';
+            msg.textContent = text;
+            aiMessages.appendChild(msg);
+            aiMessages.scrollTop = aiMessages.scrollHeight;
+        }
+
+        function appendAiMessage(html) {
+            const msg = document.createElement('div');
+            msg.className = 'self-start bg-surface-container text-on-surface rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[85%] shadow-sm text-body-md whitespace-pre-wrap';
+            // Simple markdown parsing for bold and line breaks
+            let parsed = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            parsed = parsed.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            parsed = parsed.replace(/\n/g, '<br/>');
+            msg.innerHTML = parsed;
+            aiMessages.appendChild(msg);
+            aiMessages.scrollTop = aiMessages.scrollHeight;
+        }
+        
+        // --- Stock Chart Logic ---
+        let stockChartInstance = null;
+        
+        window.openStockChart = function(name, marketTrend) {
+            document.getElementById('stockChartModal').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('stockChartBackdrop').classList.remove('opacity-0');
+                document.getElementById('stockChartContainer').classList.remove('translate-y-full');
+            }, 10);
+            
+            document.getElementById('stockChartPropName').textContent = name;
+            document.getElementById('stockChartTrendText').textContent = "12-Month Market Trend: " + marketTrend;
+            
+            const trendVal = parseFloat(marketTrend);
+            
+            let labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const d = new Date();
+            const m = d.getMonth();
+            labels = labels.slice(m+1).concat(labels.slice(0, m+1));
+            
+            let dataPoints = [];
+            let currentVal = -trendVal; 
+            for(let i=0; i<12; i++) {
+                currentVal += (trendVal / 12) + ((Math.random() - 0.5) * (Math.abs(trendVal)*0.4));
+                dataPoints.push(currentVal.toFixed(2));
+            }
+            
+            let indexPoints = dataPoints.map(p => 100 + parseFloat(p));
+
+            const ctx = document.getElementById('stockChartCanvas').getContext('2d');
+            if(stockChartInstance) stockChartInstance.destroy();
+            
+            const isUp = trendVal >= 0;
+            const lineColor = isUp ? '#16a34a' : '#dc2626';
+            const bgColor = isUp ? 'rgba(22, 163, 74, 0.1)' : 'rgba(220, 38, 38, 0.1)';
+            
+            stockChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Property Value Index',
+                        data: indexPoints,
+                        borderColor: lineColor,
+                        backgroundColor: bgColor,
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHitRadius: 20,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Market Index: ' + context.parsed.y.toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { display: true },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        };
+
+        window.closeStockChart = function() {
+            document.getElementById('stockChartBackdrop').classList.add('opacity-0');
+            document.getElementById('stockChartContainer').classList.add('translate-y-full');
+            setTimeout(() => {
+                document.getElementById('stockChartModal').classList.add('hidden');
+                if(stockChartInstance) stockChartInstance.destroy();
+            }, 300);
+        };
+    </script>
+</body>
+</html>

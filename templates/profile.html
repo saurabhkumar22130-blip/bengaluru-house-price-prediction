@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Profile - Premium Properties</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#003d9b',
+                        'on-primary': '#ffffff',
+                        'primary-container': '#d8e2ff',
+                        'on-primary-container': '#001a41',
+                        surface: '#faf9ff',
+                        'on-surface': '#191c20',
+                        'surface-variant': '#e0e2ec',
+                        'on-surface-variant': '#44474e',
+                        'outline': '#74777f',
+                        'outline-variant': '#c4c6d0',
+                        'error': '#ba1a1a',
+                        'on-error': '#ffffff',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        body {
+            background-color: #faf9ff;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-sans antialiased min-h-screen pb-24 relative overflow-x-hidden">
+    <!-- Abstract Background -->
+    <div class="fixed top-0 left-0 w-full h-[40vh] bg-gradient-to-br from-primary/10 via-primary-container to-surface z-[-1] rounded-b-[40px] opacity-70"></div>
+
+    <!-- Header Section with Avatar -->
+    <header class="pt-12 pb-6 px-6 relative">
+        <div class="flex justify-between items-start">
+            <div>
+                <h1 class="text-3xl font-bold tracking-tight text-primary">Profile</h1>
+                <p class="text-on-surface-variant mt-1 text-sm font-medium">Manage your account</p>
+            </div>
+            <button class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+                <span class="material-symbols-outlined">settings</span>
+            </button>
+        </div>
+
+        <!-- Profile Card -->
+        <div class="mt-8 glass-card rounded-3xl p-6 flex items-center gap-5 relative overflow-hidden">
+            <!-- Decorative shape -->
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-primary/5 rounded-full blur-2xl"></div>
+            
+            <div class="relative shrink-0">
+                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80" alt="Avatar" class="w-20 h-20 rounded-full object-cover shadow-lg border-2 border-white relative z-10">
+                <div class="absolute bottom-0 right-0 w-6 h-6 bg-green-500 border-2 border-white rounded-full z-20 flex items-center justify-center shadow-sm">
+                    <span class="material-symbols-outlined text-[14px] text-white" style="font-variation-settings: 'FILL' 1;">check</span>
+                </div>
+            </div>
+            <div class="relative z-10 flex-1">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h2 id="profileName" class="text-xl font-bold text-on-surface">Alex Johnson</h2>
+                        <p id="profileEmail" class="text-on-surface-variant text-sm mt-0.5">alex.johnson@example.com</p>
+                    </div>
+                    <button onclick="openEditModal()" class="w-8 h-8 rounded-full bg-white/50 hover:bg-white shadow-sm flex items-center justify-center text-primary transition-colors border border-white">
+                        <span class="material-symbols-outlined text-[18px]">edit</span>
+                    </button>
+                </div>
+                <div class="mt-2 inline-flex items-center gap-1 bg-gradient-to-r from-[#ffd700]/20 to-[#ffd700]/10 text-[#b8860b] px-2.5 py-1 rounded-lg text-xs font-bold border border-[#ffd700]/30 shadow-sm">
+                    <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+                    Premium Member
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="px-6 space-y-6">
+        <!-- Stats Row -->
+        <div class="grid grid-cols-3 gap-3">
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-surface-variant/50 text-center flex flex-col justify-center items-center">
+                <span id="savedCount" class="text-2xl font-bold text-primary">0</span>
+                <span class="text-[10px] uppercase tracking-wider text-on-surface-variant font-semibold mt-1">Saved</span>
+            </div>
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-surface-variant/50 text-center flex flex-col justify-center items-center">
+                <span class="text-2xl font-bold text-primary">4</span>
+                <span class="text-[10px] uppercase tracking-wider text-on-surface-variant font-semibold mt-1">Alerts</span>
+            </div>
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-surface-variant/50 text-center flex flex-col justify-center items-center">
+                <span class="text-2xl font-bold text-primary">3</span>
+                <span class="text-[10px] uppercase tracking-wider text-on-surface-variant font-semibold mt-1">Tours</span>
+            </div>
+        </div>
+
+        <!-- Saved Properties Section -->
+        <div>
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold">Saved Properties</h3>
+                <a href="#" class="text-sm font-semibold text-primary">See All</a>
+            </div>
+            
+            <div id="savedPropertiesList" class="space-y-4">
+                <!-- Javascript will populate this -->
+            </div>
+        </div>
+
+        <!-- Account Actions -->
+        <div class="bg-white rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-surface-variant/50 overflow-hidden">
+            <a href="#" class="flex items-center justify-between p-4 hover:bg-surface-variant/20 transition-colors border-b border-surface-variant/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                        <span class="material-symbols-outlined">person</span>
+                    </div>
+                    <span class="font-semibold text-sm">Personal Details</span>
+                </div>
+                <span class="material-symbols-outlined text-outline">chevron_right</span>
+            </a>
+            <a href="#" class="flex items-center justify-between p-4 hover:bg-surface-variant/20 transition-colors border-b border-surface-variant/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                        <span class="material-symbols-outlined">notifications</span>
+                    </div>
+                    <span class="font-semibold text-sm">Notifications</span>
+                </div>
+                <span class="material-symbols-outlined text-outline">chevron_right</span>
+            </a>
+            <a href="#" class="flex items-center justify-between p-4 hover:bg-surface-variant/20 transition-colors border-b border-surface-variant/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                        <span class="material-symbols-outlined">security</span>
+                    </div>
+                    <span class="font-semibold text-sm">Security & Privacy</span>
+                </div>
+                <span class="material-symbols-outlined text-outline">chevron_right</span>
+            </a>
+            <a href="#" class="flex items-center justify-between p-4 hover:bg-surface-variant/20 transition-colors border-b border-surface-variant/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                        <span class="material-symbols-outlined">help</span>
+                    </div>
+                    <span class="font-semibold text-sm">Help & Support</span>
+                </div>
+                <span class="material-symbols-outlined text-outline">chevron_right</span>
+            </a>
+            
+            <!-- Logout -->
+            <a href="{{ url_for('logout') }}" class="flex items-center justify-between p-4 hover:bg-error/5 transition-colors group">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-error/10 text-error flex items-center justify-center group-hover:bg-error group-hover:text-white transition-colors">
+                        <span class="material-symbols-outlined">logout</span>
+                    </div>
+                    <span class="font-semibold text-sm text-error">Log Out</span>
+                </div>
+            </a>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 left-0 w-full bg-surface-container dark:bg-surface-container-high border-t border-outline-variant/30 flex justify-around py-3 px-2 z-[1000] pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+        <a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant p-2 transition-all active:scale-95" href="{{ url_for('index') }}">
+            <span class="material-symbols-outlined">analytics</span>
+            <span class="font-label-md text-label-md mt-1">Predict</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant p-2 transition-all active:scale-95" href="{{ url_for('map_page') }}">
+            <span class="material-symbols-outlined">explore</span>
+            <span class="font-label-md text-label-md mt-1">Map</span>
+        </a>
+        <a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-xl px-3 py-1 transition-all active:scale-95" href="{{ url_for('profile') }}">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+            <span class="font-label-md text-label-md mt-1">Profile</span>
+        </a>
+    </nav>
+    <!-- Edit Profile Modal -->
+    <div id="editModal" class="fixed inset-0 z-[2000] hidden flex items-center justify-center pointer-events-none px-4">
+        <div class="bg-surface-container-highest/60 backdrop-blur-sm absolute inset-0 transition-opacity opacity-0 pointer-events-auto" id="editBackdrop" onclick="closeEditModal()"></div>
+        <div class="bg-surface w-full max-w-sm rounded-3xl shadow-2xl pointer-events-auto transition-transform scale-95 opacity-0 duration-300 ease-out flex flex-col border border-outline-variant z-10" id="editContainer">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="font-headline-md text-xl text-primary">Edit Profile</h2>
+                    <button onclick="closeEditModal()" class="text-outline hover:text-on-surface">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+                
+                <form id="editProfileForm" onsubmit="handleProfileSave(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-on-surface-variant mb-1">Name</label>
+                        <input type="text" id="editNameInput" class="w-full bg-surface-container rounded-xl px-4 py-3 text-body-md focus:outline-none focus:ring-2 focus:ring-primary border-none shadow-inner" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-on-surface-variant mb-1">Email</label>
+                        <input type="email" id="editEmailInput" class="w-full bg-surface-container rounded-xl px-4 py-3 text-body-md focus:outline-none focus:ring-2 focus:ring-primary border-none shadow-inner" required>
+                    </div>
+                    <button type="submit" class="w-full bg-primary hover:bg-primary/90 text-white rounded-xl py-3 font-bold mt-2 shadow-sm transition-colors active:scale-95">
+                        Save Changes
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Profile Edit Logic
+        const profileName = document.getElementById('profileName');
+        const profileEmail = document.getElementById('profileEmail');
+        const editModal = document.getElementById('editModal');
+        const editBackdrop = document.getElementById('editBackdrop');
+        const editContainer = document.getElementById('editContainer');
+        const editNameInput = document.getElementById('editNameInput');
+        const editEmailInput = document.getElementById('editEmailInput');
+        
+        const savedPropertiesList = document.getElementById('savedPropertiesList');
+        const savedCount = document.getElementById('savedCount');
+
+        // Load saved profile data
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedName = localStorage.getItem('profileName');
+            const savedEmail = localStorage.getItem('profileEmail');
+            if(savedName) profileName.textContent = savedName;
+            if(savedEmail) profileEmail.textContent = savedEmail;
+            
+            renderSavedProperties();
+        });
+
+        function renderSavedProperties() {
+            const savedProps = JSON.parse(localStorage.getItem('savedProperties')) || [];
+            
+            if(savedCount) savedCount.textContent = savedProps.length;
+
+            if (savedProps.length === 0) {
+                savedPropertiesList.innerHTML = `
+                    <div class="bg-surface-container rounded-3xl p-8 text-center border-2 border-dashed border-outline-variant/50">
+                        <div class="w-16 h-16 bg-primary-container rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="material-symbols-outlined text-[32px] text-primary">real_estate_agent</span>
+                        </div>
+                        <h4 class="text-lg font-bold text-on-surface">No saved properties</h4>
+                        <p class="text-on-surface-variant text-sm mt-1 mb-6">Explore the map to find and save your dream properties!</p>
+                        <a href="{{ url_for('map_page') }}" class="inline-block bg-primary text-white px-6 py-2.5 rounded-full font-bold shadow-sm hover:bg-primary/90 transition-colors">Explore Map</a>
+                    </div>
+                `;
+                return;
+            }
+
+            savedPropertiesList.innerHTML = savedProps.map(prop => `
+                <div class="bg-white rounded-2xl p-3 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-surface-variant/50 flex gap-4 active:scale-[0.98] transition-transform relative">
+                    <div class="w-24 h-24 rounded-xl bg-primary-container shrink-0 overflow-hidden relative flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[40px] text-primary opacity-50">${prop.icon || 'home'}</span>
+                        <div class="absolute top-2 right-2 w-7 h-7 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm">
+                            <span class="material-symbols-outlined text-[16px] text-error" style="font-variation-settings: 'FILL' 1;">favorite</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 py-1 pr-8">
+                        <div class="flex justify-between items-start">
+                            <span class="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md uppercase">${prop.type}</span>
+                        </div>
+                        <h4 class="font-bold text-sm mt-1 leading-tight line-clamp-1">${prop.name}</h4>
+                        <p class="text-xs text-on-surface-variant mt-1 flex items-center gap-1 line-clamp-1"><span class="material-symbols-outlined text-[12px]">info</span> ${prop.details}</p>
+                        <p class="font-bold text-primary mt-2">${prop.price}</p>
+                    </div>
+                    <button onclick="removeSavedProperty('${prop.id}')" class="absolute top-3 right-3 text-outline hover:text-error transition-colors p-1 bg-surface rounded-full shadow-sm">
+                        <span class="material-symbols-outlined text-[18px]">close</span>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        window.removeSavedProperty = function(id) {
+            let savedProps = JSON.parse(localStorage.getItem('savedProperties')) || [];
+            savedProps = savedProps.filter(p => String(p.id) !== String(id));
+            localStorage.setItem('savedProperties', JSON.stringify(savedProps));
+            renderSavedProperties();
+        };
+
+        window.openEditModal = function() {
+            editNameInput.value = profileName.textContent;
+            editEmailInput.value = profileEmail.textContent;
+            
+            editModal.classList.remove('hidden');
+            setTimeout(() => {
+                editBackdrop.classList.remove('opacity-0');
+                editContainer.classList.remove('scale-95', 'opacity-0');
+            }, 10);
+        };
+
+        window.closeEditModal = function() {
+            editBackdrop.classList.add('opacity-0');
+            editContainer.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                editModal.classList.add('hidden');
+            }, 300);
+        };
+
+        window.handleProfileSave = function(e) {
+            e.preventDefault();
+            const newName = editNameInput.value.trim();
+            const newEmail = editEmailInput.value.trim();
+            
+            if(newName && newEmail) {
+                profileName.textContent = newName;
+                profileEmail.textContent = newEmail;
+                localStorage.setItem('profileName', newName);
+                localStorage.setItem('profileEmail', newEmail);
+                closeEditModal();
+            }
+        };
+    </script>
+</body>
+</html>

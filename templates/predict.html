@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Price Predictor - Results</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-variant": "#e0e3e5",
+                    "surface-container-highest": "#e0e3e5",
+                    "surface-container-high": "#e6e8ea",
+                    "secondary-fixed-dim": "#4edea3",
+                    "tertiary": "#611e00",
+                    "on-tertiary": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "on-error-container": "#93000a",
+                    "on-surface": "#191c1e",
+                    "on-tertiary-fixed-variant": "#802a00",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "on-background": "#191c1e",
+                    "on-secondary-fixed": "#002113",
+                    "surface-dim": "#d8dadc",
+                    "tertiary-fixed-dim": "#ffb59a",
+                    "surface-tint": "#3755c3",
+                    "on-tertiary-container": "#ffa583",
+                    "background": "#f7f9fb",
+                    "inverse-on-surface": "#eff1f3",
+                    "outline-variant": "#c4c5d5",
+                    "on-secondary-container": "#00714d",
+                    "surface-bright": "#f7f9fb",
+                    "surface-container": "#eceef0",
+                    "primary-fixed-dim": "#b8c4ff",
+                    "secondary-fixed": "#6ffbbe",
+                    "on-primary": "#ffffff",
+                    "primary-fixed": "#dde1ff",
+                    "primary-container": "#1e40af",
+                    "on-primary-fixed": "#001453",
+                    "inverse-surface": "#2d3133",
+                    "outline": "#757684",
+                    "surface": "#f7f9fb",
+                    "surface-container-low": "#f2f4f6",
+                    "secondary-container": "#6cf8bb",
+                    "on-tertiary-fixed": "#380d00",
+                    "primary": "#00288e",
+                    "on-secondary-fixed-variant": "#005236",
+                    "on-primary-fixed-variant": "#173bab",
+                    "secondary": "#006c49",
+                    "inverse-primary": "#b8c4ff",
+                    "tertiary-container": "#872d00",
+                    "on-primary-container": "#a8b8ff",
+                    "error": "#ba1a1a",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed": "#ffdbce",
+                    "on-surface-variant": "#444653"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "margin-desktop": "40px",
+                    "lg": "24px",
+                    "sm": "8px",
+                    "xl": "32px",
+                    "max-width": "1280px",
+                    "xs": "4px",
+                    "gutter": "20px",
+                    "md": "16px",
+                    "base": "4px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "label-bold": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "price-display": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "label-bold": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "display-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-sm": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.25", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "price-display": ["36px", {"lineHeight": "1", "letterSpacing": "-0.03em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #f7f9fb;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        .custom-card-shadow {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+        /* Mobile Specific Layout */
+        @media (max-width: 768px) {
+            .mobile-padding { padding-left: 16px; padding-right: 16px; }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface border-b border-outline-variant h-16 flex items-center justify-between px-md max-w-max-width mx-auto">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-primary hover:bg-surface-container-high p-2 rounded-full transition-colors active:opacity-80" data-icon="arrow_back">arrow_back</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary"> Your Price</h1>
+</div>
+<div class="flex items-center">
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-2 rounded-full transition-colors active:opacity-80" data-icon="more_vert">more_vert</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="mt-16 pt-8 px-margin-mobile flex flex-col gap-6 max-w-lg mx-auto">
+<!-- Animated Background Element (Optional micro-interaction anchor) -->
+<div class="relative w-full h-40 overflow-hidden rounded-xl border border-outline-variant bg-white">
+
+<div class="absolute inset-0 flex flex-col items-center justify-center p-md text-center">
+<span class="font-label-bold text-label-bold text-primary tracking-widest mb-1">ANALYSIS COMPLETE</span>
+<div class="h-1 w-12 bg-primary rounded-full"></div>
+</div>
+</div>
+<!-- High-Emphasis Prediction Card -->
+<section class="bg-white border border-outline-variant rounded-xl p-lg custom-card-shadow text-center relative overflow-hidden">
+<!-- Decorative accent -->
+<div class="absolute top-0 left-0 w-full h-1 bg-primary"></div>
+<p class="font-label-bold text-label-bold text-on-surface-variant mb-2">PREDICTED MARKET VALUE</p>
+<div class="flex flex-col items-center justify-center gap-1 mb-4">
+<h2 class="font-price-display text-price-display text-primary transition-all duration-700 ease-out" id="price-target">
+                    ₹ {{ price }} Lakh
+
+
+                </h2>
+<!-- Confidence Badge -->
+<div class="flex items-center gap-1 px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full mt-2">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="font-label-bold text-label-bold">94% Confidence</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed px-2">
+                Based on current market trends and property features in your selected micro-market.
+            </p>
+</section>
+<!-- Secondary Data Bento Grid -->
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-white border border-outline-variant rounded-xl p-md flex flex-col gap-1">
+<span class="font-label-bold text-label-bold text-on-surface-variant">Yearly Trend</span>
+<div class="flex items-center gap-1 text-secondary">
+<span class="material-symbols-outlined" data-icon="trending_up">trending_up</span>
+<span class="font-headline-md text-headline-md font-bold">+12.4%</span>
+</div>
+</div>
+<div class="bg-white border border-outline-variant rounded-xl p-md flex flex-col gap-1">
+<span class="font-label-bold text-label-bold text-on-surface-variant">Market Heat</span>
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined" data-icon="local_fire_department">local_fire_department</span>
+<span class="font-headline-md text-headline-md font-bold">High</span>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-col gap-3 mt-4">
+<button id="savePredictionBtn" onclick="togglePredictionSave()" class="w-full bg-primary-container text-on-primary text-body-md font-label-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all">
+<span id="saveBtnIcon" class="material-symbols-outlined" data-icon="save">save</span>
+                <span id="saveBtnText">SAVE PREDICTION</span>
+            </button>
+<button class="w-full border border-primary text-primary text-body-md font-label-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-surface-container active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined" data-icon="share">share</span>
+                SHARE RESULT
+            </button>
+</div>
+<!-- Property Visual Reference -->
+<div class="mt-6">
+<h3 class="font-label-bold text-label-bold text-on-surface-variant mb-4 px-1 uppercase tracking-wider">Property Context</h3>
+<div class="relative w-full aspect-video rounded-xl overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A clean, minimalist high-end residential modern apartment building exterior under a bright, clear blue sky. The architecture is contemporary with large glass windows and sleek steel lines, shot in a professional architectural photography style. The colors are dominated by crisp whites and subtle cool blues, perfectly matching a professional real estate dashboard aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAt_tIyqCTA6YL2wPolFyuo9pEL5Z8wEzi2ng6DaPN1nclo_9XGG9lgfRbafYrmeuGjhtz8kggxqS4lTxrWAFejouZW6pbh4qxoI5BzWzSzIKqh5Xcooc0-q94l7vHHrQ7QoVxlp9afgrIoS5z-KI0W7DOTVZp-ers4Qpc0wEIl2tlKqlpacUo6vqwwC3uCoBHZRXMURbd-iB-uVaRIxU73MfRwn5IWn2JLkygZ5uFyH5IGlHUOLLjZUraR-wycmWZwdegEDhikWJqy"/>
+<div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
+<div class="flex items-center text-white gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="location_on">location_on</span>
+<span class="font-body-sm text-body-sm">{{ location }} Property</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 pb-safe bg-surface/90 backdrop-blur-md dark:bg-surface-container-lowest/90 border-t border-outline-variant shadow-[0px_-4px_20px_rgba(0,0,0,0.1)]">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant p-2 transition-all active:scale-95" href="{{ url_for('index') }}">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-md text-label-md mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-xl px-3 py-1 transition-all active:scale-95" href="{{ url_for('index') }}">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="font-label-md text-label-md mt-1">Predict</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant p-2 transition-all active:scale-95" href="{{ url_for('map_page') }}">
+<span class="material-symbols-outlined">explore</span>
+<span class="font-label-md text-label-md mt-1">Map</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant p-2 transition-all active:scale-95" href="{{ url_for('profile') }}">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-md text-label-md mt-1">Profile</span>
+</a>
+</nav>
+<script>
+        // Micro-interaction for price load animation
+        const predId = 'pred_{{ location|replace(" ", "_") }}_{{ bhk }}_{{ sqft }}_{{ bath }}';
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const priceElement = document.getElementById('price-target');
+            if(priceElement) {
+                priceElement.classList.add('scale-105');
+                setTimeout(() => {
+                    priceElement.classList.remove('scale-105');
+                }, 300);
+            }
+            
+            checkIfSaved();
+        });
+
+        function checkIfSaved() {
+            let savedProps = JSON.parse(localStorage.getItem('savedProperties') || '[]');
+            const isSaved = savedProps.some(p => p.id === predId);
+            
+            const btn = document.getElementById('savePredictionBtn');
+            const btnText = document.getElementById('saveBtnText');
+            const btnIcon = document.getElementById('saveBtnIcon');
+            
+            if (isSaved) {
+                btn.classList.replace('bg-primary-container', 'bg-error-container');
+                btn.classList.replace('text-on-primary', 'text-on-error-container');
+                btnText.innerText = "REMOVE PREDICTION";
+                btnIcon.innerText = "delete";
+            } else {
+                btn.classList.replace('bg-error-container', 'bg-primary-container');
+                btn.classList.replace('text-on-error-container', 'text-on-primary');
+                btnText.innerText = "SAVE PREDICTION";
+                btnIcon.innerText = "save";
+            }
+        }
+
+        function togglePredictionSave() {
+            let savedProps = JSON.parse(localStorage.getItem('savedProperties') || '[]');
+            const index = savedProps.findIndex(p => p.id === predId);
+            
+            if (index >= 0) {
+                // Remove it
+                savedProps.splice(index, 1);
+            } else {
+                // Save it
+                const priceStr = '₹{{ price }} Lakh';
+                const locationName = '{{ location }}';
+                const details = '{{ bhk }} BHK • {{ sqft }} sqft • {{ bath }} Bath';
+                
+                const newSaved = {
+                    id: predId,
+                    name: locationName + ' Area',
+                    price: priceStr,
+                    details: details,
+                    type: 'PREDICTION',
+                    icon: 'analytics'
+                };
+                savedProps.push(newSaved);
+            }
+
+            localStorage.setItem('savedProperties', JSON.stringify(savedProps));
+            checkIfSaved(); // Update button visually immediately
+        }
+    </script>
+</body></html>
