@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+    <title>{{ prop.title or prop.location }} - PropBroker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        "body": ["Inter", "sans-serif"],
+                        "heading": ["Manrope", "sans-serif"],
+                    },
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#10b981',
+                        surface: '#0f172a',
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        body { background-color: #0f172a; color: white; -webkit-tap-highlight-color: transparent; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; display: inline-block; vertical-align: middle; }
+        .bg-slider-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="font-body antialiased min-h-screen flex flex-col">
+
+    <!-- Background Video -->
+    <div class="bg-slider-container">
+        <video autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;">
+            <source src="{{ url_for('static', filename='background_video.mp4') }}" type="video/mp4">
+        </video>
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-[4px]"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="w-full sticky top-0 z-50 bg-black/40 backdrop-blur-xl border-b border-white/10 shadow-sm">
+        <div class="flex items-center justify-between px-4 h-16 w-full max-w-5xl mx-auto">
+            <a href="javascript:history.back()" class="active:scale-95 transition-transform p-2 -ml-2 text-white/80 hover:text-white rounded-full hover:bg-white/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[24px]">arrow_back</span>
+            </a>
+            <h1 class="font-heading text-lg font-bold tracking-tight truncate px-2">Property Details</h1>
+            <button onclick="shareProperty()" class="text-white/80 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[22px]">share</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="relative z-10 w-full max-w-lg mx-auto flex-grow pb-24">
+        <!-- Hero Image -->
+        <div class="w-full h-[40vh] relative bg-black/20">
+            <img src="{{ prop.image_url }}" alt="Property" class="w-full h-full object-cover">
+            <div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-surface to-transparent pt-20">
+                {% if prop.price %}
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-primary/90 text-white font-bold text-lg shadow-lg mb-2">
+                    ₹{{ prop.price }}
+                </div>
+                {% endif %}
+                <h2 class="font-heading text-2xl font-extrabold text-white leading-tight drop-shadow-md">{{ prop.title or prop.location }}</h2>
+                <div class="flex items-center gap-1 text-white/80 text-sm mt-1">
+                    <span class="material-symbols-outlined text-[16px]">location_on</span>
+                    {{ prop.location }}
+                </div>
+            </div>
+        </div>
+
+        <div class="px-5 py-6 space-y-6">
+            <!-- Key Stats -->
+            <div class="grid grid-cols-4 gap-3">
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 border border-white/10 flex flex-col items-center justify-center text-center">
+                    <span class="material-symbols-outlined text-primary mb-1 text-[24px]">bed</span>
+                    <span class="font-bold text-white leading-none">{{ prop.bedrooms }}</span>
+                    <span class="text-[10px] text-white/60 uppercase font-medium mt-1">Beds</span>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 border border-white/10 flex flex-col items-center justify-center text-center">
+                    <span class="material-symbols-outlined text-secondary mb-1 text-[24px]">bathtub</span>
+                    <span class="font-bold text-white leading-none">{{ prop.bathrooms or '1' }}</span>
+                    <span class="text-[10px] text-white/60 uppercase font-medium mt-1">Baths</span>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 border border-white/10 flex flex-col items-center justify-center text-center">
+                    <span class="material-symbols-outlined text-purple-400 mb-1 text-[24px]">square_foot</span>
+                    <span class="font-bold text-white leading-none">{{ prop.area }}</span>
+                    <span class="text-[10px] text-white/60 uppercase font-medium mt-1">Sqft</span>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 border border-white/10 flex flex-col items-center justify-center text-center">
+                    <span class="material-symbols-outlined text-amber-400 mb-1 text-[24px]">visibility</span>
+                    <span class="font-bold text-white leading-none">{{ prop.views or 0 }}</span>
+                    <span class="text-[10px] text-white/60 uppercase font-medium mt-1">Views</span>
+                </div>
+            </div>
+
+            <!-- Details Card -->
+            <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-5 space-y-4">
+                <h3 class="font-heading text-lg font-bold">Property Overview</h3>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <span class="block text-xs text-white/50 uppercase font-semibold mb-1">Property Type</span>
+                        <span class="font-medium">{{ prop.property_type or 'Residential' }}</span>
+                    </div>
+                    {% if prop.year_built %}
+                    <div>
+                        <span class="block text-xs text-white/50 uppercase font-semibold mb-1">Year Built</span>
+                        <span class="font-medium">{{ prop.year_built }}</span>
+                    </div>
+                    {% endif %}
+                    {% if prop.lot_size %}
+                    <div>
+                        <span class="block text-xs text-white/50 uppercase font-semibold mb-1">Lot Size</span>
+                        <span class="font-medium">{{ prop.lot_size }} Acres</span>
+                    </div>
+                    {% endif %}
+                    <div>
+                        <span class="block text-xs text-white/50 uppercase font-semibold mb-1">Listed On</span>
+                        <span class="font-medium">{{ prop.created_at.strftime('%b %d, %Y') if prop.created_at else 'Recently' }}</span>
+                    </div>
+                </div>
+
+                {% if prop.amenities %}
+                <div class="pt-2 border-t border-white/10">
+                    <span class="block text-xs text-white/50 uppercase font-semibold mb-2">Amenities</span>
+                    <div class="flex flex-wrap gap-2">
+                        {% for amenity in prop.amenities.split(',') %}
+                        <span class="px-2.5 py-1 bg-white/10 rounded-lg text-sm font-medium">{{ amenity.strip() }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Broker Card -->
+            <div class="bg-gradient-to-r from-blue-900/40 to-indigo-900/40 backdrop-blur-xl border border-blue-500/20 rounded-3xl p-5 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center text-blue-300">
+                        <span class="material-symbols-outlined text-[28px]">real_estate_agent</span>
+                    </div>
+                    <div>
+                        <span class="block text-xs text-blue-200 uppercase font-semibold">Listed By Broker</span>
+                        <span class="font-bold text-white">{{ prop.broker.username }}</span>
+                    </div>
+                </div>
+                <a href="tel:{{ prop.contact }}" class="bg-blue-500 hover:bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center transition-colors shadow-lg shadow-blue-500/30">
+                    <span class="material-symbols-outlined text-[20px]">call</span>
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Bottom Nav Bar -->
+    <nav class="fixed bottom-0 left-0 w-full z-[1000] flex justify-around items-center px-4 py-2 pb-safe bg-black/50 backdrop-blur-xl border-t border-white/10 shadow-[0px_-4px_20px_rgba(0,0,0,0.3)]">
+        <a class="flex flex-col items-center justify-center text-white/70 p-2 transition-all active:scale-95 hover:text-white" href="{{ url_for('logout') }}">
+            <span class="material-symbols-outlined">login</span>
+            <span class="font-label-md text-[10px] font-medium mt-1">Login</span>
+        </a>
+        
+        {% if user.role != 'broker' %}
+        <a class="flex flex-col items-center justify-center text-white/70 p-2 transition-all active:scale-95 hover:text-white" href="{{ url_for('index') }}">
+            <span class="material-symbols-outlined">insights</span>
+            <span class="font-label-md text-[10px] font-medium mt-1">Predict</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-white/70 p-2 transition-all active:scale-95 hover:text-white" href="{{ url_for('map_page') }}">
+            <span class="material-symbols-outlined">map</span>
+            <span class="font-label-md text-[10px] font-medium mt-1">Map</span>
+        </a>
+        {% else %}
+        <a class="flex flex-col items-center justify-center text-white/70 p-2 transition-all active:scale-95 hover:text-white" href="{{ url_for('broker_upload') }}">
+            <span class="material-symbols-outlined">add_business</span>
+            <span class="font-label-md text-[10px] font-medium mt-1">New Listing</span>
+        </a>
+        {% endif %}
+        
+        <a class="flex flex-col items-center justify-center text-white/70 p-2 transition-all active:scale-95 hover:text-white" href="{{ url_for('profile') }}">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+            <span class="font-label-md text-[10px] font-medium mt-1">Profile</span>
+        </a>
+    </nav>
+
+    <script>
+        function shareProperty() {
+            const title = '{{ prop.title or prop.location }}';
+            const location = '{{ prop.location }}';
+            const shareText = `Check out this property: ${title} located in ${location}!`;
+            const shareUrl = window.location.href;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Property Listing',
+                    text: shareText,
+                    url: shareUrl,
+                }).catch(console.error);
+            } else {
+                navigator.clipboard.writeText(`${shareText} ${shareUrl}`)
+                    .then(() => alert('Property link copied to clipboard!'))
+                    .catch(console.error);
+            }
+        }
+    </script>
+
+</body>
+</html>

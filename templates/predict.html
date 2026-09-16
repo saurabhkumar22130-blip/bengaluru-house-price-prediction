@@ -167,9 +167,7 @@
 <p class="font-label-bold text-label-bold text-on-surface-variant mb-2">PREDICTED MARKET VALUE</p>
 <div class="flex flex-col items-center justify-center gap-1 mb-4">
 <h2 class="font-price-display text-price-display text-primary transition-all duration-700 ease-out" id="price-target">
-                    ₹ {{ price }} Lakh
-
-
+                    {{ price }}
                 </h2>
 <!-- Confidence Badge -->
 <div class="flex items-center gap-1 px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full mt-2">
@@ -204,7 +202,7 @@
 <span id="saveBtnIcon" class="material-symbols-outlined" data-icon="save">save</span>
                 <span id="saveBtnText">SAVE PREDICTION</span>
             </button>
-<button class="w-full border border-primary text-primary text-body-md font-label-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-surface-container active:scale-[0.98] transition-all">
+<button onclick="sharePrediction()" class="w-full border border-primary text-primary text-body-md font-label-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-surface-container active:scale-[0.98] transition-all">
 <span class="material-symbols-outlined" data-icon="share">share</span>
                 SHARE RESULT
             </button>
@@ -213,7 +211,7 @@
 <div class="mt-6">
 <h3 class="font-label-bold text-label-bold text-on-surface-variant mb-4 px-1 uppercase tracking-wider">Property Context</h3>
 <div class="relative w-full aspect-video rounded-xl overflow-hidden border border-outline-variant">
-<img class="w-full h-full object-cover" data-alt="A clean, minimalist high-end residential modern apartment building exterior under a bright, clear blue sky. The architecture is contemporary with large glass windows and sleek steel lines, shot in a professional architectural photography style. The colors are dominated by crisp whites and subtle cool blues, perfectly matching a professional real estate dashboard aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAt_tIyqCTA6YL2wPolFyuo9pEL5Z8wEzi2ng6DaPN1nclo_9XGG9lgfRbafYrmeuGjhtz8kggxqS4lTxrWAFejouZW6pbh4qxoI5BzWzSzIKqh5Xcooc0-q94l7vHHrQ7QoVxlp9afgrIoS5z-KI0W7DOTVZp-ers4Qpc0wEIl2tlKqlpacUo6vqwwC3uCoBHZRXMURbd-iB-uVaRIxU73MfRwn5IWn2JLkygZ5uFyH5IGlHUOLLjZUraR-wycmWZwdegEDhikWJqy"/>
+<img class="w-full h-full object-cover" data-alt="A clean, minimalist high-end residential modern apartment building exterior under a bright, clear blue sky. The architecture is contemporary with large glass windows and sleek steel lines, shot in a professional architectural photography style. The colors are dominated by crisp whites and subtle cool blues, perfectly matching a professional real estate dashboard aesthetic." src="{{ image_url }}"/>
 <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
 <div class="flex items-center text-white gap-2">
 <span class="material-symbols-outlined text-sm" data-icon="location_on">location_on</span>
@@ -224,21 +222,21 @@
 </div>
 </main>
 <!-- BottomNavBar -->
-<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 pb-safe bg-surface/90 backdrop-blur-md dark:bg-surface-container-lowest/90 border-t border-outline-variant shadow-[0px_-4px_20px_rgba(0,0,0,0.1)]">
-<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant p-2 transition-all active:scale-95" href="{{ url_for('index') }}">
-<span class="material-symbols-outlined">home</span>
-<span class="font-label-md text-label-md mt-1">Home</span>
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 pb-safe bg-black/50 backdrop-blur-xl border-t border-white/10 shadow-[0px_-4px_20px_rgba(0,0,0,0.3)]">
+<a class="flex flex-col items-center justify-center text-white/70 p-2 transition-all active:scale-95 hover:text-white" href="{{ url_for('logout') }}">
+<span class="material-symbols-outlined">login</span>
+<span class="font-label-md text-label-md mt-1">Login</span>
 </a>
-<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-xl px-3 py-1 transition-all active:scale-95" href="{{ url_for('index') }}">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<a class="flex flex-col items-center justify-center bg-primary/20 text-white rounded-2xl px-4 py-1.5 transition-all duration-300 active:scale-95 shadow-[0_0_15px_rgba(255,255,255,0.2)] border border-white/20" href="{{ url_for('index') }}">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">insights</span>
 <span class="font-label-md text-label-md mt-1">Predict</span>
 </a>
-<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant p-2 transition-all active:scale-95" href="{{ url_for('map_page') }}">
-<span class="material-symbols-outlined">explore</span>
+<a class="flex flex-col items-center justify-center text-white/70 p-2 transition-all active:scale-95 hover:text-white" href="{{ url_for('map_page') }}">
+<span class="material-symbols-outlined">map</span>
 <span class="font-label-md text-label-md mt-1">Map</span>
 </a>
-<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant p-2 transition-all active:scale-95" href="{{ url_for('profile') }}">
-<span class="material-symbols-outlined">person</span>
+<a class="flex flex-col items-center justify-center text-white/70 p-2 transition-all active:scale-95 hover:text-white" href="{{ url_for('profile') }}">
+<span class="material-symbols-outlined">account_circle</span>
 <span class="font-label-md text-label-md mt-1">Profile</span>
 </a>
 </nav>
@@ -288,7 +286,7 @@
                 savedProps.splice(index, 1);
             } else {
                 // Save it
-                const priceStr = '₹{{ price }} Lakh';
+                const priceStr = '{{ price }}';
                 const locationName = '{{ location }}';
                 const details = '{{ bhk }} BHK • {{ sqft }} sqft • {{ bath }} Bath';
                 
@@ -306,5 +304,25 @@
             localStorage.setItem('savedProperties', JSON.stringify(savedProps));
             checkIfSaved(); // Update button visually immediately
         }
+
+        function sharePrediction() {
+            const price = '{{ price }}';
+            const locationName = '{{ location }}';
+            const shareText = `I just predicted a property price of ${price} in ${locationName} using PropBroker!`;
+            const shareUrl = window.location.href;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Price Prediction Result',
+                    text: shareText,
+                    url: shareUrl,
+                }).catch(console.error);
+            } else {
+                navigator.clipboard.writeText(`${shareText} ${shareUrl}`)
+                    .then(() => alert('Prediction result copied to clipboard!'))
+                    .catch(console.error);
+            }
+        }
     </script>
+
 </body></html>

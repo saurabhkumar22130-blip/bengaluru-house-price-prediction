@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.gemini_scratch/
+instance/
+.env
+venv/
+.venv/
